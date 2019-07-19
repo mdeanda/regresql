@@ -42,22 +42,24 @@ public class RegresqlService {
         streamToCsvService.convert(rsdss, test.getExpected());
     }
 
-    public boolean runAllTests(File source, File expected, File output) throws Exception {
+    public boolean runAllTests(File source, File expected, File output, int maxErrors) throws Exception {
+        boolean hasErrors = false;
         List<TestSource> tests = listTests(source, expected);
         for (TestSource test : tests) {
             if (test.getExpected().exists()) {
                 File targetDir = new File(output, test.getRelativePath());
                 File targetFile = new File(targetDir, test.getExpected().getName());
-                targetFile.mkdirs();
-                runTest(test, targetFile);
+                targetFile.getParentFile().mkdirs();
+                boolean passed = runTest(test, targetFile, maxErrors);
+                hasErrors |= !passed;
             } else {
                 log.info("{} missing expected output, skipping.", test.getSource());
             }
         }
-        return tests.isEmpty();
+        return !hasErrors;
     }
 
-    public void runTest(TestSource test, File output) throws Exception {
+    public boolean runTest(TestSource test, File output, int maxErrors) throws Exception {
         //TODO: write db result to output file
 
         long start = System.currentTimeMillis();
@@ -69,7 +71,7 @@ public class RegresqlService {
 
         CsvDataStreamSource actualData = new CsvDataStreamSource(output);
         CsvDataStreamSource expectedData = new CsvDataStreamSource(test.getExpected());
-        SimpleDataStreamComparator comparator = new SimpleDataStreamComparator(new DataStream(expectedData), new DataStream(actualData));
+        SimpleDataStreamComparator comparator = new SimpleDataStreamComparator(new DataStream(expectedData), new DataStream(actualData), maxErrors);
 
         List<RowDifference> diffs = comparator.compareStreams();
         long end = System.currentTimeMillis();
@@ -78,5 +80,6 @@ public class RegresqlService {
         } else {
             log.info("Test passed: {} {}ms", test.getSource(), (end-start));
         }
+        return diffs.isEmpty();
     }
 }

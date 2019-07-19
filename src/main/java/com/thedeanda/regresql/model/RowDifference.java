@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class RowDifference {
-    private int index;
+    private int line;
     private RowModel expectedRow;
     private RowModel actualRow;
 }

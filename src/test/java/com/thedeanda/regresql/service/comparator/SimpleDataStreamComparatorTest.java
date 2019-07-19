@@ -24,7 +24,7 @@ public class SimpleDataStreamComparatorTest {
         DataStream dsA = new DataStream(dataSourceA);
         DataStream dsB = new DataStream(dataSourceB);
 
-        comparator = new SimpleDataStreamComparator(dsA, dsB);
+        comparator = new SimpleDataStreamComparator(dsA, dsB, 10);
 
         assertThat(comparator.columnsMatch()).isTrue();
     }
@@ -37,7 +37,7 @@ public class SimpleDataStreamComparatorTest {
         DataStream dsA = new DataStream(dataSourceA);
         DataStream dsB = new DataStream(dataSourceB);
 
-        comparator = new SimpleDataStreamComparator(dsA, dsB);
+        comparator = new SimpleDataStreamComparator(dsA, dsB, 10);
 
 
         assertThat(comparator.columnsMatch()).isFalse();
@@ -60,7 +60,7 @@ public class SimpleDataStreamComparatorTest {
         DataStream dsA = new DataStream(dataSourceA);
         DataStream dsB = new DataStream(dataSourceB);
 
-        comparator = new SimpleDataStreamComparator(dsA, dsB);
+        comparator = new SimpleDataStreamComparator(dsA, dsB, 10);
 
         List<RowDifference> results = comparator.compareStreams();
 
@@ -85,7 +85,7 @@ public class SimpleDataStreamComparatorTest {
         DataStream dsA = new DataStream(dataSourceA);
         DataStream dsB = new DataStream(dataSourceB);
 
-        comparator = new SimpleDataStreamComparator(dsA, dsB);
+        comparator = new SimpleDataStreamComparator(dsA, dsB, 10);
 
         List<RowDifference> results = comparator.compareStreams();
 
@@ -115,7 +115,7 @@ public class SimpleDataStreamComparatorTest {
         DataStream dsA = new DataStream(dataSourceA);
         DataStream dsB = new DataStream(dataSourceB);
 
-        comparator = new SimpleDataStreamComparator(dsA, dsB);
+        comparator = new SimpleDataStreamComparator(dsA, dsB, 10);
 
         List<RowDifference> results = comparator.compareStreams();
 
@@ -145,7 +145,7 @@ public class SimpleDataStreamComparatorTest {
         DataStream dsA = new DataStream(dataSourceA);
         DataStream dsB = new DataStream(dataSourceB);
 
-        comparator = new SimpleDataStreamComparator(dsA, dsB);
+        comparator = new SimpleDataStreamComparator(dsA, dsB, 10);
 
         List<RowDifference> results = comparator.compareStreams();
 
