@@ -6,6 +6,7 @@ import com.thedeanda.regresql.datastream.ResultSetDataStreamSource;
 import com.thedeanda.regresql.model.DataStream;
 import com.thedeanda.regresql.model.RowDifference;
 import com.thedeanda.regresql.model.TestSource;
+import com.thedeanda.regresql.service.DiffWriter;
 import com.thedeanda.regresql.service.StreamToCsvService;
 import com.thedeanda.regresql.service.comparator.SimpleDataStreamComparator;
 import com.thedeanda.regresql.service.comparator.TestLocator;
@@ -17,9 +18,11 @@ import java.util.List;
 @Slf4j
 public class RegresqlService {
     private final DataSource dataSource;
+    private final DiffWriter diffWriter;
 
     public RegresqlService(DataSource dataSource) {
         this.dataSource = dataSource;
+        diffWriter = new DiffWriter();
     }
 
     public List<TestSource> listTests(File source, File expected) {
@@ -48,9 +51,8 @@ public class RegresqlService {
         for (TestSource test : tests) {
             if (test.getExpected().exists()) {
                 File targetDir = new File(output, test.getRelativePath());
-                File targetFile = new File(targetDir, test.getExpected().getName());
-                targetFile.getParentFile().mkdirs();
-                boolean passed = runTest(test, targetFile, maxErrors);
+                targetDir.mkdirs();
+                boolean passed = runTest(test, targetDir, maxErrors);
                 hasErrors |= !passed;
             } else {
                 log.info("{} missing expected output, skipping.", test.getSource());
@@ -59,26 +61,29 @@ public class RegresqlService {
         return !hasErrors;
     }
 
-    public boolean runTest(TestSource test, File output, int maxErrors) throws Exception {
+    public boolean runTest(TestSource test, File outputDir, int maxErrors) throws Exception {
         //TODO: write db result to output file
 
         long start = System.currentTimeMillis();
         log.info("Running test: {}", test.getSource());
+        File outputCsv = new File(outputDir, test.getBaseName() + TestLocator.CSV_EXT);
+
         ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getSource());
         rsdss.init();
         StreamToCsvService streamToCsvService = new StreamToCsvService();
-        streamToCsvService.convert(rsdss, output);
+        streamToCsvService.convert(rsdss, outputCsv);
 
-        CsvDataStreamSource actualData = new CsvDataStreamSource(output);
+        CsvDataStreamSource actualData = new CsvDataStreamSource(outputCsv);
         CsvDataStreamSource expectedData = new CsvDataStreamSource(test.getExpected());
         SimpleDataStreamComparator comparator = new SimpleDataStreamComparator(new DataStream(expectedData), new DataStream(actualData), maxErrors);
 
         List<RowDifference> diffs = comparator.compareStreams();
         long end = System.currentTimeMillis();
         if (!diffs.isEmpty()) {
-            log.warn("Test failed: {} {}ms", diffs, (end-start));
+            log.warn("Test failed: {}, {} errors, duration {}ms", test.getSource(), diffs.size(), (end-start));
+            diffWriter.outputDiffs(expectedData.getHeaderModel(), diffs, outputDir, test);
         } else {
-            log.info("Test passed: {} {}ms", test.getSource(), (end-start));
+            log.info("Test passed: {}, duration {}ms", test.getSource(), (end-start));
         }
         return diffs.isEmpty();
     }

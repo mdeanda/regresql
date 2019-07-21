@@ -12,6 +12,7 @@ import java.io.File;
 @ToString
 @EqualsAndHashCode
 public class TestSource {
+    private String baseName;
     private File source;
     private File expected;
     private String relativePath;

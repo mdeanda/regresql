@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 public class TestLocator {
     public static final String SOURCE_EXT = ".sql";
     public static final String EXPECTED_EXT = ".csv";
+    public static final String CSV_EXT = ".csv";
 
     private final File sourcePath;
     private final File expectedPath;
@@ -39,9 +40,11 @@ public class TestLocator {
         );
 
         Stream.of(files).filter(f -> !f.isDirectory()).forEach(f -> {
+            String baseName = StringUtils.removeEnd(f.getName(), SOURCE_EXT);
             results.add(TestSource.builder()
+                    .baseName(baseName)
                     .source(f)
-                    .expected(findExpected(extraPath, f))
+                    .expected(findExpected(extraPath, baseName))
                     .relativePath(extraPath)
                     .build());
         });
@@ -51,8 +54,8 @@ public class TestLocator {
         });
     }
 
-    private File findExpected(String extraPath, File f) {
-        String fn = extraPath + File.separator + StringUtils.removeEnd(f.getName(), SOURCE_EXT) + EXPECTED_EXT;
+    private File findExpected(String extraPath, String baseName) {
+        String fn = extraPath + File.separator + baseName + EXPECTED_EXT;
         File expectedFile = new File(expectedPath, fn);
         return expectedFile;
     }
