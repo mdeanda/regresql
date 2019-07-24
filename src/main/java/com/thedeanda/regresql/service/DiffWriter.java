@@ -5,9 +5,9 @@ import com.thedeanda.regresql.model.HeaderModel;
 import com.thedeanda.regresql.model.RowDifference;
 import com.thedeanda.regresql.model.RowModel;
 import com.thedeanda.regresql.model.TestSource;
-import com.thedeanda.regresql.service.comparator.TestLocator;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -29,10 +29,14 @@ public class DiffWriter {
         outputDiffsAsSparseCsv(headerModel, diffs, outputDir, test);
     }
 
+    private CSVFormat getCsvFormat() {
+        return CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL);
+    }
+
     public void outputDiffsAsCsv(HeaderModel headerModel, List<RowDifference> diffs, File outputDir, TestSource test) throws IOException {
         File outputFile = new File(outputDir, test.getBaseName() + DIFF_TYPE_1_SUFFIX);
         outputFile.delete();
-        try (CSVPrinter printer = new CSVPrinter(new FileWriter(outputFile), CSVFormat.DEFAULT)) {
+        try (CSVPrinter printer = new CSVPrinter(new FileWriter(outputFile), getCsvFormat())) {
             List<String> header = getListWithPrefixValue(headerModel.getColumnNames(), ROW_HEADER, DIFF_HEADER);
             printer.printRecord(header);
 
@@ -54,7 +58,7 @@ public class DiffWriter {
     public void outputDiffsAsSparseCsv(HeaderModel headerModel, List<RowDifference> diffs, File outputDir, TestSource test) throws IOException {
         File outputFile = new File(outputDir, test.getBaseName() + DIFF_TYPE_SPARSE_SUFFIX);
         outputFile.delete();
-        try (CSVPrinter printer = new CSVPrinter(new FileWriter(outputFile), CSVFormat.DEFAULT)) {
+        try (CSVPrinter printer = new CSVPrinter(new FileWriter(outputFile), getCsvFormat())) {
             List<String> header = getListWithPrefixValue(headerModel.getColumnNames(), ROW_HEADER, DIFF_HEADER);
             printer.printRecord(header);
 

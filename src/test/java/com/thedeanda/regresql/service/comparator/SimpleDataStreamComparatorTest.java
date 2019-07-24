@@ -89,11 +89,11 @@ public class SimpleDataStreamComparatorTest {
 
         List<RowDifference> results = comparator.compareStreams();
 
-        assertThat(results).hasSize(3).extracting("expectedRow", "actualRow")
+        assertThat(results).hasSize(3).extracting("expectedRow", "actualRow", "line")
                 .containsExactly(
-                        tuple(null, row1),
-                        tuple(null, row2),
-                        tuple(null, row3)
+                        tuple(null, row1, 2),
+                        tuple(null, row2, 3),
+                        tuple(null, row3, 4)
                 );
     }
 
@@ -119,11 +119,11 @@ public class SimpleDataStreamComparatorTest {
 
         List<RowDifference> results = comparator.compareStreams();
 
-        assertThat(results).hasSize(3).extracting("expectedRow", "actualRow")
+        assertThat(results).hasSize(3).extracting("expectedRow", "actualRow", "line")
                 .containsExactly(
-                        tuple(row1, null),
-                        tuple(row2, null),
-                        tuple(row3, null)
+                        tuple(row1, null, 2),
+                        tuple(row2, null, 3),
+                        tuple(row3, null, 4)
                 );
     }
 
@@ -149,10 +149,10 @@ public class SimpleDataStreamComparatorTest {
 
         List<RowDifference> results = comparator.compareStreams();
 
-        assertThat(results).hasSize(2).extracting("expectedRow", "actualRow")
+        assertThat(results).hasSize(2).extracting("expectedRow", "actualRow", "line")
                 .containsExactly(
-                        tuple(row2, row3),
-                        tuple(row3, null)
+                        tuple(row2, row3, 3),
+                        tuple(row3, null, 4)
                 );
     }
 }

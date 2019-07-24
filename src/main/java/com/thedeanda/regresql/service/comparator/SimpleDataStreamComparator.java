@@ -18,7 +18,7 @@ public class SimpleDataStreamComparator extends DataStreamComparator {
     @Override
     public List<RowDifference> compareStreams() {
 
-        int index = 0;
+        int index = 2; //0 is the header, but 1 based so start at 2
         List<RowDifference> results = new ArrayList<>();
 
         RowModel rowExpected = null;
@@ -29,20 +29,20 @@ public class SimpleDataStreamComparator extends DataStreamComparator {
             rowExpected = expectedStream.next();
             if (rowExpected == null) {
                 // expected stream done, get the rest of the actual stream
-                addTheRestActual(results, actualStream, index+1);
+                addTheRestActual(results, actualStream, index);
                 break;
             } else {
                 rowActual = actualStream.next();
                 if (rowActual == null) {
                     results.add(RowDifference.builder()
-                            .line(index+1)
+                            .line(index)
                             .expectedRow(rowExpected)
                             .build());
                     addTheRestExpected(results, expectedStream, index+1);
                     break;
                 } else if (!rowActual.equals(rowExpected)) {
                     results.add(RowDifference.builder()
-                            .line(index+1)
+                            .line(index)
                             .expectedRow(rowExpected)
                             .actualRow(rowActual)
                             .build());
@@ -63,7 +63,7 @@ public class SimpleDataStreamComparator extends DataStreamComparator {
         RowModel row;
         while ((row = stream.next()) != null && !reachedMaxErrors(results)) {
             results.add(RowDifference.builder()
-                    .line(1+startIndex++)
+                    .line(startIndex++)
                     .expectedRow(row)
                     .build());
         }
@@ -73,7 +73,7 @@ public class SimpleDataStreamComparator extends DataStreamComparator {
         RowModel row;
         while ((row = stream.next()) != null && !reachedMaxErrors(results)) {
             results.add(RowDifference.builder()
-                    .line(1+startIndex++)
+                    .line(startIndex++)
                     .actualRow(row)
                     .build());
         }
