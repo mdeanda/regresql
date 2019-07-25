@@ -11,9 +11,19 @@ import java.io.File;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class TestSource {
+public class TestSource implements Comparable<TestSource> {
     private String baseName;
     private File source;
     private File expected;
     private String relativePath;
+
+    @Override
+    public int compareTo(TestSource testSource) {
+        int val = 0;
+        val = relativePath.compareTo(testSource.getRelativePath());
+        if (val == 0) {
+            val = baseName.compareTo(testSource.getBaseName());
+        }
+        return val;
+    }
 }

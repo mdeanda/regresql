@@ -28,7 +28,7 @@ public class TestLocator {
     public List<TestSource> locateTests() {
         List<TestSource> results = new ArrayList<>();
 
-        findTests(sourcePath, "", results);
+        findTests(sourcePath, ".", results);
 
         return results;
     }

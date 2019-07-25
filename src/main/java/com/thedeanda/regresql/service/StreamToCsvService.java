@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @Slf4j
 public class StreamToCsvService {
     public void convert(DataStreamSource dataStreamSource, File output) {
+        output.getParentFile().mkdirs();
         output.delete();
         try (CSVPrinter printer = new CSVPrinter(new FileWriter(output), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL))) {
             HeaderModel headerModel = dataStreamSource.getHeaderModel();

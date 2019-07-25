@@ -1,5 +1,6 @@
 package com.thedeanda.regresql;
 
+import com.google.common.collect.ImmutableSet;
 import com.thedeanda.regresql.datasource.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
@@ -8,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.sql.*;
 import java.util.Properties;
+import java.util.Set;
 
 @Slf4j
 public class RegresqlApplication {
@@ -21,6 +23,13 @@ public class RegresqlApplication {
 	private static final String OPTION_HELP = "help";
 	private static final String OPTION_COMMAND_UPDATE = "update";
 	private static final String OPTION_COMMAND_TEST = "test";
+	private static final String OPTION_COMMAND_LIST = "list";
+
+	private static final Set<String> VALID_COMMANDS = ImmutableSet.of(
+			OPTION_COMMAND_UPDATE,
+			OPTION_COMMAND_TEST,
+			OPTION_COMMAND_LIST
+	);
 
 
 	public static void main(String[] args) throws Exception {
@@ -38,7 +47,7 @@ public class RegresqlApplication {
 				.argName(OPTION_COMMAND)
 				//.required(true)
 				.longOpt(OPTION_COMMAND)
-				.desc(OPTION_COMMAND + ": [" + OPTION_COMMAND_UPDATE + ", " + OPTION_COMMAND_TEST + "]")
+				.desc(OPTION_COMMAND + ": [" + OPTION_COMMAND_UPDATE + ", " + OPTION_COMMAND_TEST + ", " + OPTION_COMMAND_LIST + "]")
 				.build());
 
 
@@ -77,6 +86,11 @@ public class RegresqlApplication {
 			case OPTION_COMMAND_UPDATE:
 				service.updateAllTests(source, expected);
 				break;
+			case OPTION_COMMAND_LIST:
+				service.listTests(source, expected);
+				break;
+			default:
+				showHelp(options);
 		}
 
 	}
@@ -88,7 +102,7 @@ public class RegresqlApplication {
 		}
 
 		String command = cmd.getOptionValue(OPTION_COMMAND);
-		if (!"update".equals(command) && !"test".equals(command)) {
+		if (!VALID_COMMANDS.contains(command)) {
 			log.warn("invalid command: {}", command);
 			return false;
 		}

@@ -13,6 +13,7 @@ import com.thedeanda.regresql.service.comparator.TestLocator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -26,12 +27,23 @@ public class RegresqlService {
     }
 
     public List<TestSource> listTests(File source, File expected) {
+        List<TestSource> tests = listTestsInternal(source, expected);
+        tests.forEach(t -> {
+            log.info("test name: {}/{}, has expected file: {}", t.getRelativePath(), t.getBaseName(), t.getExpected().exists());
+        });
+        return tests;
+    }
+
+    private List<TestSource> listTestsInternal(File source, File expected) {
         TestLocator locator = new TestLocator(source, expected);
-        return locator.locateTests();
+        List<TestSource> tests = locator.locateTests();
+
+        Collections.sort(tests);
+        return tests;
     }
 
     public void updateAllTests(File source, File expected) throws Exception {
-        List<TestSource> tests = listTests(source, expected);
+        List<TestSource> tests = listTestsInternal(source, expected);
         for (TestSource test : tests) {
             updateTest(test, source, expected);
         }
@@ -47,7 +59,7 @@ public class RegresqlService {
 
     public boolean runAllTests(File source, File expected, File output, int maxErrors) throws Exception {
         boolean hasErrors = false;
-        List<TestSource> tests = listTests(source, expected);
+        List<TestSource> tests = listTestsInternal(source, expected);
         for (TestSource test : tests) {
             if (test.getExpected().exists()) {
                 File targetDir = new File(output, test.getRelativePath());
