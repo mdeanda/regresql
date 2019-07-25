@@ -36,10 +36,7 @@ public class RegresqlService {
 
     private List<TestSource> listTestsInternal(File source, File expected) {
         TestLocator locator = new TestLocator(source, expected);
-        List<TestSource> tests = locator.locateTests();
-
-        Collections.sort(tests);
-        return tests;
+        return locator.locateTests();
     }
 
     public void updateAllTests(File source, File expected) throws Exception {

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -30,6 +31,7 @@ public class TestLocator {
 
         findTests(sourcePath, ".", results);
 
+        Collections.sort(results);
         return results;
     }
 
