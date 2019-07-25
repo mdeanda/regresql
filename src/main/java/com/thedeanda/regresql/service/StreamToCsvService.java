@@ -6,6 +6,7 @@ import com.thedeanda.regresql.model.RowModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 public class StreamToCsvService {
     public void convert(DataStreamSource dataStreamSource, File output) {
         output.delete();
-        try (CSVPrinter printer = new CSVPrinter(new FileWriter(output), CSVFormat.DEFAULT)) {
+        try (CSVPrinter printer = new CSVPrinter(new FileWriter(output), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL))) {
             HeaderModel headerModel = dataStreamSource.getHeaderModel();
             printer.printRecord(headerModel.getColumnNames());
             RowModel record = null;
