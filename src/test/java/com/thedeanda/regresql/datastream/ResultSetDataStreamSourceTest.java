@@ -1,5 +1,6 @@
 package com.thedeanda.regresql.datastream;
 
+import com.thedeanda.regresql.TestDatabase;
 import com.thedeanda.regresql.datasource.DataSource;
 import com.thedeanda.regresql.model.HeaderModel;
 import com.thedeanda.regresql.model.RowModel;
@@ -8,21 +9,22 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.sql.SQLException;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResultSetDataStreamSourceTest {
 
-    private static DataSource ds;
+    private DataSource ds;
 
-    @BeforeClass
-    public static void init() {
-        Properties props = new Properties(); //TODO: test properties
-        ds = new DataSource(props);
+    @Before
+    public void init() throws SQLException {
+        TestDatabase testDatabase = new TestDatabase();
+        ds = testDatabase.getDataSource();
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void testBasic() throws Exception {
         String sql = "select id, username \n\n\n --\n from user_account limit 2";
@@ -30,7 +32,7 @@ public class ResultSetDataStreamSourceTest {
         source.init();
 
         HeaderModel header = source.getHeaderModel();
-        assertThat(header.getColumnNames()).containsExactly("id", "username");
+        assertThat(header.getColumnNames()).containsExactly("ID", "USERNAME");
 
         RowModel row = source.next();
         assertThat(row).isNotNull();
