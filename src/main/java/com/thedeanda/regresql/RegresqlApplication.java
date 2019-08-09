@@ -2,10 +2,12 @@ package com.thedeanda.regresql;
 
 import com.google.common.collect.ImmutableSet;
 import com.thedeanda.regresql.datasource.DataSource;
+import com.thedeanda.regresql.ui.RegresqlUiFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.swing.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Properties;
@@ -24,11 +26,13 @@ public class RegresqlApplication {
 	private static final String OPTION_COMMAND_UPDATE = "update";
 	private static final String OPTION_COMMAND_TEST = "test";
 	private static final String OPTION_COMMAND_LIST = "list";
+	private static final String OPTION_COMMAND_UI = "ui";
 
 	private static final Set<String> VALID_COMMANDS = ImmutableSet.of(
 			OPTION_COMMAND_UPDATE,
 			OPTION_COMMAND_TEST,
-			OPTION_COMMAND_LIST
+			OPTION_COMMAND_LIST,
+			OPTION_COMMAND_UI
 	);
 
 
@@ -47,7 +51,11 @@ public class RegresqlApplication {
 				.argName(OPTION_COMMAND)
 				//.required(true)
 				.longOpt(OPTION_COMMAND)
-				.desc(OPTION_COMMAND + ": [" + OPTION_COMMAND_UPDATE + ", " + OPTION_COMMAND_TEST + ", " + OPTION_COMMAND_LIST + "]")
+				.desc(OPTION_COMMAND + ": ["
+						+ OPTION_COMMAND_UPDATE + ", "
+						+ OPTION_COMMAND_TEST + ", "
+						+ OPTION_COMMAND_LIST + ", "
+						+ OPTION_COMMAND_UI + "]")
 				.build());
 
 
@@ -89,10 +97,19 @@ public class RegresqlApplication {
 			case OPTION_COMMAND_LIST:
 				service.listTests(source, expected);
 				break;
+			case OPTION_COMMAND_UI:
+				showUi(service, source, expected);
+				break;
 			default:
 				showHelp(options);
 		}
+	}
 
+	private static void showUi(RegresqlService service, File source, File expected) {
+		RegresqlUiFrame frame = new RegresqlUiFrame(service, source, expected);
+		frame.pack();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 	}
 
 	private static boolean checkParams(CommandLine cmd) {
