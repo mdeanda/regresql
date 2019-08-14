@@ -6,8 +6,8 @@ import javax.swing.*;
 import java.io.File;
 
 public class RegresqlUiFrame extends JFrame {
-    public RegresqlUiFrame(RegresqlService service, File source, File expected) {
-        RegresqlUiMainPanel panel = new RegresqlUiMainPanel(service, source, expected);
+    public RegresqlUiFrame(RegresqlService service) {
+        RegresqlUiMainPanel panel = new RegresqlUiMainPanel(service);
         getContentPane().add(panel);
     }
 }

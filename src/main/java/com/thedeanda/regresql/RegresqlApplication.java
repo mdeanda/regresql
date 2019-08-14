@@ -82,31 +82,31 @@ public class RegresqlApplication {
 		Properties properties = readProperties(cmd);
 		DataSource dataSource = new DataSource(properties);
 
-		RegresqlService service = new RegresqlService(dataSource);
+		RegresqlService service = new RegresqlService(dataSource, source, expected);
 
 		switch (command) {
 			case OPTION_COMMAND_TEST:
-				boolean passed = service.runAllTests(source, expected, output, maxErrors);
+				boolean passed = service.runAllTests(output, maxErrors);
 				if (!passed) {
 					System.exit(1);
 				}
 				break;
 			case OPTION_COMMAND_UPDATE:
-				service.updateAllTests(source, expected);
+				service.updateAllTests();
 				break;
 			case OPTION_COMMAND_LIST:
-				service.listTests(source, expected);
+				service.listTests();
 				break;
 			case OPTION_COMMAND_UI:
-				showUi(service, source, expected);
+				showUi(service);
 				break;
 			default:
 				showHelp(options);
 		}
 	}
 
-	private static void showUi(RegresqlService service, File source, File expected) {
-		RegresqlUiFrame frame = new RegresqlUiFrame(service, source, expected);
+	private static void showUi(RegresqlService service) {
+		RegresqlUiFrame frame = new RegresqlUiFrame(service);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -134,7 +134,7 @@ public class RegresqlApplication {
 			return false;
 		}
 
-		if (!cmd.hasOption(OPTION_OUTPUT) && OPTION_COMMAND_TEST.equals(command)) {
+		if (!cmd.hasOption(OPTION_OUTPUT) && (OPTION_COMMAND_TEST.equals(command) || OPTION_COMMAND_UI.equals(command))) {
 			log.warn("missing output");
 			return false;
 		}

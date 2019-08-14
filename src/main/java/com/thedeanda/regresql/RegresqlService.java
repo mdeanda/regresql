@@ -20,33 +20,37 @@ import java.util.List;
 public class RegresqlService {
     private final DataSource dataSource;
     private final DiffWriter diffWriter;
+    private final File source;
+    private final File expected;
 
-    public RegresqlService(DataSource dataSource) {
+    public RegresqlService(DataSource dataSource, File source, File expected) {
         this.dataSource = dataSource;
+        this.source = source;
+        this.expected = expected;
         diffWriter = new DiffWriter();
     }
 
-    public List<TestSource> listTests(File source, File expected) {
-        List<TestSource> tests = listTestsInternal(source, expected);
+    public List<TestSource> listTests() {
+        List<TestSource> tests = listTestsInternal();
         tests.forEach(t -> {
             log.info("test name: {}/{}, has expected file: {}", t.getRelativePath(), t.getBaseName(), t.getExpected().exists());
         });
         return tests;
     }
 
-    private List<TestSource> listTestsInternal(File source, File expected) {
+    private List<TestSource> listTestsInternal() {
         TestLocator locator = new TestLocator(source, expected);
         return locator.locateTests();
     }
 
-    public void updateAllTests(File source, File expected) throws Exception {
-        List<TestSource> tests = listTestsInternal(source, expected);
+    public void updateAllTests() throws Exception {
+        List<TestSource> tests = listTestsInternal();
         for (TestSource test : tests) {
-            updateTest(test, source, expected);
+            updateTest(test);
         }
     }
 
-    public void updateTest(TestSource test, File source, File expected) throws Exception {
+    public void updateTest(TestSource test) throws Exception {
         log.info("updating test data for {}", test.getSource());
         ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getSource());
         rsdss.init();
@@ -54,9 +58,9 @@ public class RegresqlService {
         streamToCsvService.convert(rsdss, test.getExpected());
     }
 
-    public boolean runAllTests(File source, File expected, File output, int maxErrors) throws Exception {
+    public boolean runAllTests(File output, int maxErrors) throws Exception {
         boolean hasErrors = false;
-        List<TestSource> tests = listTestsInternal(source, expected);
+        List<TestSource> tests = listTestsInternal();
         for (TestSource test : tests) {
             if (test.getExpected().exists()) {
                 File targetDir = new File(output, test.getRelativePath());
@@ -71,8 +75,6 @@ public class RegresqlService {
     }
 
     public boolean runTest(TestSource test, File outputDir, int maxErrors) throws Exception {
-        //TODO: write db result to output file
-
         long start = System.currentTimeMillis();
         log.info("Running test: {}", test.getSource());
         File outputCsv = new File(outputDir, test.getBaseName() + TestLocator.CSV_EXT);
