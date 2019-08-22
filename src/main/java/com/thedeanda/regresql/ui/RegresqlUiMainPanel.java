@@ -1,6 +1,7 @@
 package com.thedeanda.regresql.ui;
 
 import com.thedeanda.regresql.RegresqlService;
+import com.thedeanda.regresql.ui.detail.MultiDetailPanel;
 import com.thedeanda.regresql.ui.list.TestListPanel;
 
 import javax.swing.*;
@@ -13,6 +14,7 @@ public class RegresqlUiMainPanel extends JPanel {
     private JSplitPane split;
     private TestListPanel testList;
     private JScrollPane listScroll;
+    private MultiDetailPanel multiDetailPanel = new MultiDetailPanel();
 
     public RegresqlUiMainPanel(RegresqlService service) {
         this.service = service;
@@ -29,7 +31,7 @@ public class RegresqlUiMainPanel extends JPanel {
         split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         split.setDividerLocation(300);
         split.setLeftComponent(listScroll);
-        split.setRightComponent(new JButton("button"));
+        split.setRightComponent(multiDetailPanel);
 
         add(split, BorderLayout.CENTER);
     }
