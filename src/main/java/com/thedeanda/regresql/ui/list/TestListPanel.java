@@ -18,9 +18,11 @@ public class TestListPanel extends JPanel {
     private final JList list;
     private final RegresqlService regresqlService;
     private final TestListModel model;
+    private final SelectionListener selectionListener;
 
-    public TestListPanel(final RegresqlService regresqlService) {
+    public TestListPanel(final RegresqlService regresqlService, SelectionListener selectionListener) {
         this.regresqlService = regresqlService;
+        this.selectionListener = selectionListener;
 
         setLayout(new BorderLayout());
 
@@ -44,5 +46,6 @@ public class TestListPanel extends JPanel {
 
     private void selected(Collection<TestSource> items) {
         log.info("item selected: {}, {}", items.size(), items);
+        selectionListener.onSelect(items);
     }
 }

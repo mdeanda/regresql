@@ -4,20 +4,22 @@ import com.thedeanda.regresql.model.TestSource;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 
 /**
  * panel to show when multiple tests are selected
  */
-public class MultiDetailPanel extends JPanel {
-    public MultiDetailPanel() {
+public class SingleDetailPanel extends JPanel {
+    private final JLabel lbl;
+
+    public SingleDetailPanel() {
         BorderLayout layout = new BorderLayout();
         setMinimumSize(new Dimension(200, 80));
         this.setLayout(layout);
-        add(new JButton("MultiDetailPanel"), BorderLayout.CENTER);
+        lbl = new JLabel("SingleDetailPanel");
+        add(lbl, BorderLayout.CENTER);
     }
 
-    public void setTestSource(Collection<TestSource> testSource) {
-
+    public void setTestSource(TestSource testSource) {
+        lbl.setText(testSource.toString());
     }
 }
