@@ -13,7 +13,6 @@ import com.thedeanda.regresql.service.comparator.TestLocator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -68,6 +67,27 @@ public class RegresqlService {
             }
         }
         return !hasErrors;
+    }
+
+    /** runs test and returns diffs */
+    public List<RowDifference> runTest(TestSource test, int maxErrors) throws Exception {
+        long start = System.currentTimeMillis();
+        log.info("Running test: {}", test.getSource());
+
+        ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getSource());
+        rsdss.init();
+
+        CsvDataStreamSource expectedData = new CsvDataStreamSource(test.getExpected());
+        SimpleDataStreamComparator comparator = new SimpleDataStreamComparator(new DataStream(expectedData), new DataStream(rsdss), maxErrors);
+
+        List<RowDifference> diffs = comparator.compareStreams();
+        long end = System.currentTimeMillis();
+        if (!diffs.isEmpty()) {
+            log.warn("Test failed: {}, {} errors, duration {}ms", test.getSource(), diffs.size(), (end-start));
+        } else {
+            log.info("Test passed: {}, duration {}ms", test.getSource(), (end-start));
+        }
+        return diffs;
     }
 
     public boolean runTest(TestSource test, File outputDir, int maxErrors) throws Exception {
