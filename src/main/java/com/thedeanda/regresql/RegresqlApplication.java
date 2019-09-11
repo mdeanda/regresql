@@ -2,10 +2,12 @@ package com.thedeanda.regresql;
 
 import com.google.common.collect.ImmutableSet;
 import com.thedeanda.regresql.datasource.DataSource;
+import com.thedeanda.regresql.ui.RegresqlUiFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.swing.*;
 import java.io.*;
 import java.sql.*;
 import java.util.Properties;
@@ -24,11 +26,13 @@ public class RegresqlApplication {
 	private static final String OPTION_COMMAND_UPDATE = "update";
 	private static final String OPTION_COMMAND_TEST = "test";
 	private static final String OPTION_COMMAND_LIST = "list";
+	private static final String OPTION_COMMAND_UI = "ui";
 
 	private static final Set<String> VALID_COMMANDS = ImmutableSet.of(
 			OPTION_COMMAND_UPDATE,
 			OPTION_COMMAND_TEST,
-			OPTION_COMMAND_LIST
+			OPTION_COMMAND_LIST,
+			OPTION_COMMAND_UI
 	);
 
 
@@ -47,7 +51,11 @@ public class RegresqlApplication {
 				.argName(OPTION_COMMAND)
 				//.required(true)
 				.longOpt(OPTION_COMMAND)
-				.desc(OPTION_COMMAND + ": [" + OPTION_COMMAND_UPDATE + ", " + OPTION_COMMAND_TEST + ", " + OPTION_COMMAND_LIST + "]")
+				.desc(OPTION_COMMAND + ": ["
+						+ OPTION_COMMAND_UPDATE + ", "
+						+ OPTION_COMMAND_TEST + ", "
+						+ OPTION_COMMAND_LIST + ", "
+						+ OPTION_COMMAND_UI + "]")
 				.build());
 
 
@@ -74,25 +82,34 @@ public class RegresqlApplication {
 		Properties properties = readProperties(cmd);
 		DataSource dataSource = new DataSource(properties);
 
-		RegresqlService service = new RegresqlService(dataSource);
+		RegresqlService service = new RegresqlService(dataSource, source, expected);
 
 		switch (command) {
 			case OPTION_COMMAND_TEST:
-				boolean passed = service.runAllTests(source, expected, output, maxErrors);
+				boolean passed = service.runAllTests(output, maxErrors);
 				if (!passed) {
 					System.exit(1);
 				}
 				break;
 			case OPTION_COMMAND_UPDATE:
-				service.updateAllTests(source, expected);
+				service.updateAllTests();
 				break;
 			case OPTION_COMMAND_LIST:
-				service.listTests(source, expected);
+				service.listTests();
+				break;
+			case OPTION_COMMAND_UI:
+				showUi(service);
 				break;
 			default:
 				showHelp(options);
 		}
+	}
 
+	private static void showUi(RegresqlService service) {
+		RegresqlUiFrame frame = new RegresqlUiFrame(service);
+		frame.pack();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 	}
 
 	private static boolean checkParams(CommandLine cmd) {
@@ -117,7 +134,7 @@ public class RegresqlApplication {
 			return false;
 		}
 
-		if (!cmd.hasOption(OPTION_OUTPUT) && OPTION_COMMAND_TEST.equals(command)) {
+		if (!cmd.hasOption(OPTION_OUTPUT) && (OPTION_COMMAND_TEST.equals(command) || OPTION_COMMAND_UI.equals(command))) {
 			log.warn("missing output");
 			return false;
 		}
