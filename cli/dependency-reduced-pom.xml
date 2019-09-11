@@ -9,7 +9,7 @@
   <groupId>com.thedeanda.regresql</groupId>
   <artifactId>regresql-cli</artifactId>
   <name>regresql-cli</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${app.version}</version>
   <build>
     <plugins>
       <plugin>

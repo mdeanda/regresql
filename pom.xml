@@ -7,7 +7,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>regresql</name>
 	<description>Regresql Project</description>
-	
+
+	<properties>
+		<app.version>0.0.1-SNAPSHOT</app.version>
+	</properties>
+
 	<packaging>pom</packaging>
 	<modules>
 		<module>core</module>
@@ -15,4 +19,14 @@
 <!-- 		<module>gui</module> -->
 <!-- 		<module>maven</module> -->
 	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.thedeanda.regresql</groupId>
+				<artifactId>regresql-core</artifactId>
+				<version>${app.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

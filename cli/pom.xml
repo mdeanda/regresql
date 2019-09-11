@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.thedeanda.regresql</groupId>
 	<artifactId>regresql-cli</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${app.version}</version>
 	<name>regresql-cli</name>
 
 	<properties>
@@ -24,7 +24,6 @@
 		<dependency>
 			<groupId>com.thedeanda.regresql</groupId>
 			<artifactId>regresql-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
