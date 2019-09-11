@@ -17,7 +17,7 @@
 		<module>core</module>
 		<module>cli</module>
 <!-- 		<module>gui</module> -->
-<!-- 		<module>maven</module> -->
+		<module>maven</module>
 	</modules>
 
 	<dependencyManagement>
