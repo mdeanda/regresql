@@ -7,10 +7,7 @@ import com.thedeanda.regresql.model.HeaderModel;
 import com.thedeanda.regresql.model.RowDifference;
 import com.thedeanda.regresql.model.RowModel;
 import com.thedeanda.regresql.model.TestSource;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -22,11 +19,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ResultSetDataStreamSourceTest {
 
     private DataSource ds;
+    private TestDatabase testDatabase;
 
     @Before
     public void init() throws SQLException {
-        TestDatabase testDatabase = new TestDatabase();
+        testDatabase = new TestDatabase();
         ds = testDatabase.getDataSource();
+    }
+
+    @After
+    public void done() throws SQLException {
+        testDatabase.reset();
     }
 
     @Test
