@@ -28,6 +28,15 @@ public class DataSource {
         ds = new HikariDataSource(config);
     }
 
+    public DataSource(String url, String username, String password) {
+        config.setJdbcUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+
+        log.info("Connecting to {} as {}", url, username);
+        ds = new HikariDataSource(config);
+    }
+
     public Connection getConnection() throws SQLException {
         return ds.getConnection();
     }

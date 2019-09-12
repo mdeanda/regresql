@@ -21,7 +21,7 @@
 				<artifactId>regresql-maven-plugin</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
-					<msg>ttteeesssttt</msg>
+					<url>ttteeesssttt</url>
 				</configuration>
 			</plugin>
 		</plugins>
