@@ -9,7 +9,7 @@
   <groupId>com.thedeanda.regresql</groupId>
   <artifactId>regresql-cli</artifactId>
   <name>regresql-cli</name>
-  <version>${app.version}</version>
+  <version>0.0.1-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -60,9 +60,6 @@
     </dependency>
   </dependencies>
   <properties>
-    <java.version>1.8</java.version>
     <regresql.mainClass>com.thedeanda.regresql.RegresqlApplication</regresql.mainClass>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 </project>

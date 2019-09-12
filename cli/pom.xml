@@ -4,13 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.thedeanda.regresql</groupId>
 	<artifactId>regresql-cli</artifactId>
-	<version>${app.version}</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<name>regresql-cli</name>
 
 	<properties>
-		<java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
 		<regresql.mainClass>com.thedeanda.regresql.RegresqlApplication</regresql.mainClass>
 	</properties>
 
