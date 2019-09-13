@@ -48,7 +48,11 @@ public class RegresqlTestMojo extends AbstractMojo {
         DataSource dataSource = new DataSource(url, username, password);
         RegresqlService service = new RegresqlService(dataSource, source, expected);
         try {
-            service.runAllTests(output, maxErrors);
+            if (!service.runAllTests(output, maxErrors)) {
+                throw new MojoFailureException("Some tests failed, see logs for more info");
+            }
+        } catch (MojoFailureException e) {
+            throw e;
         } catch (Exception e) {
             //getLog().error(e);
             throw new MojoFailureException("Test failed", e);
