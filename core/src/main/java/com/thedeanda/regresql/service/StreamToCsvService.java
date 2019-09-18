@@ -16,12 +16,13 @@ import java.time.LocalDate;
 @Slf4j
 public class StreamToCsvService {
     public void convert(DataStreamSource dataStreamSource, File output) {
+        RowModel record;
         output.getParentFile().mkdirs();
         output.delete();
-        try (CSVPrinter printer = new CSVPrinter(new FileWriter(output), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL))) {
+        try (FileWriter fileWriter = new FileWriter(output);
+                CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT.withQuoteMode(QuoteMode.ALL))) {
             HeaderModel headerModel = dataStreamSource.getHeaderModel();
             printer.printRecord(headerModel.getColumnNames());
-            RowModel record = null;
             while ((record = dataStreamSource.next()) != null) {
                 printer.printRecord(record.getData());
             }

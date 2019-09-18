@@ -26,6 +26,7 @@ public class CsvDataStreamSource implements DataStreamSource {
             parser = new CSVParser(inputStreamReader, CSVFormat.DEFAULT.withHeader());
             columns = ImmutableList.copyOf(parser.getHeaderNames());
 
+            //TODO: this loads entire dataset into memory, consider a streaming version
             this.data = parser.getRecords();
         } finally {
             parser.close();
