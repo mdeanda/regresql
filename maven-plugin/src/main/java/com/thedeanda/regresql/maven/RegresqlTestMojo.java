@@ -10,7 +10,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
+import java.io.*;
+import java.util.Properties;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -19,19 +20,34 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Mojo(name = "test")
 public class RegresqlTestMojo extends AbstractMojo {
 
-    @Parameter(property = "url")
+    public static final String PROP_URL = "url";
+    public static final String PROP_USERNAME = "username";
+    public static final String PROP_PASSWORD = "password";
+    public static final String PROP_SOURCE = "source-dir";
+    public static final String PROP_EXPECTED = "expected-dir";
+    public static final String PROP_OUTPUT = "output-dir";
+    public static final String PROP_MAX_ERRORS = "max-errors";
+
+    public static final int DEFAULT_MAX_ERRORS = 10;
+
+    @Parameter(property = "propertyFile")
+    private String propertiesFile;
+    @Parameter(property = "propertyFileWillOverride")
+    private boolean propertyFileWillOverride;
+
+    @Parameter(property = PROP_URL)
     private String url;
-    @Parameter(property = "username")
+    @Parameter(property = PROP_USERNAME)
     private String username;
-    @Parameter(property = "password")
+    @Parameter(property = PROP_PASSWORD)
     private String password;
-    @Parameter(property = "source-dir")
+    @Parameter(property = PROP_SOURCE)
     private String sourceDir;
-    @Parameter(property = "expected-dir")
+    @Parameter(property = PROP_EXPECTED)
     private String expectedDir;
-    @Parameter(property = "output-dir")
+    @Parameter(property = PROP_OUTPUT)
     private String outputDir;
-    @Parameter(property = "max-errors", defaultValue = "10")
+    @Parameter(property = PROP_MAX_ERRORS, defaultValue = "0")
     private int maxErrors;
 
 
@@ -54,13 +70,14 @@ public class RegresqlTestMojo extends AbstractMojo {
         } catch (MojoFailureException e) {
             throw e;
         } catch (Exception e) {
-            //getLog().error(e);
             throw new MojoFailureException("Test failed", e);
         }
     }
 
     private void checkParams() throws MojoFailureException {
         getLog().info("Verifying parameters");
+
+        loadPropertiesFile();
 
         if (isBlank(url))
             throw new MojoFailureException("Param 'url' is required to connect to datasource");
@@ -79,5 +96,41 @@ public class RegresqlTestMojo extends AbstractMojo {
             throw new MojoFailureException("Source folder '" + sourceDir + "' does not exist");
         if (!expected.exists())
             throw new MojoFailureException("Expected folder '" + expectedDir + "' does not exist");
+
+        if (maxErrors <= 0)
+            maxErrors = DEFAULT_MAX_ERRORS;
+    }
+
+    private void loadPropertiesFile() throws MojoFailureException {
+        Properties props = new Properties();
+        if (isBlank(propertiesFile))
+            return;
+
+        File f = new File(propertiesFile);
+        try (InputStream is = new FileInputStream(f)) {
+            props.load(is);
+        } catch (FileNotFoundException e) {
+            throw new MojoFailureException("Properties file '" + propertiesFile + "' not found");
+        } catch (IOException e) {
+            throw new MojoFailureException("Error loading properties: " + e.getMessage(), e);
+        }
+
+        if (isBlank(url) && props.containsKey(PROP_URL) || propertyFileWillOverride)
+            url = props.getProperty(PROP_URL);
+        if (isBlank(username) && props.containsKey(PROP_USERNAME) || propertyFileWillOverride)
+            username = props.getProperty(PROP_USERNAME);
+        if (isBlank(password) && props.containsKey(PROP_PASSWORD) || propertyFileWillOverride)
+            password = props.getProperty(PROP_PASSWORD);
+        if (isBlank(sourceDir) && props.containsKey(PROP_SOURCE) || propertyFileWillOverride)
+            sourceDir = props.getProperty(PROP_SOURCE);
+        if (isBlank(expectedDir) && props.containsKey(PROP_EXPECTED) || propertyFileWillOverride)
+            expectedDir = props.getProperty(PROP_EXPECTED);
+        if (isBlank(outputDir) && props.containsKey(PROP_OUTPUT) || propertyFileWillOverride)
+            outputDir = props.getProperty(PROP_OUTPUT);
+        if (isBlank(outputDir) && props.containsKey(PROP_OUTPUT) || propertyFileWillOverride)
+            outputDir = props.getProperty(PROP_OUTPUT);
+
+        if (maxErrors == 0 && props.containsKey(PROP_OUTPUT) || propertyFileWillOverride)
+            maxErrors = Integer.parseInt(props.getProperty(PROP_MAX_ERRORS));
     }
 }
