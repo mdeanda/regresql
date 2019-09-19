@@ -61,6 +61,8 @@ public class RegresqlTestMojo extends AbstractMojo {
 
         checkParams();
 
+        prepDriver();
+
         DataSource dataSource = new DataSource(url, username, password);
         RegresqlService service = new RegresqlService(dataSource, source, expected);
         try {
@@ -71,6 +73,14 @@ public class RegresqlTestMojo extends AbstractMojo {
             throw e;
         } catch (Exception e) {
             throw new MojoFailureException("Test failed", e);
+        }
+    }
+
+    private void prepDriver() {
+        // fixes postgres when run from maven, might need for other db's later.
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
         }
     }
 
