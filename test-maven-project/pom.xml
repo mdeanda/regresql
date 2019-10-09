@@ -12,6 +12,8 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<rsql.source-dir>source</rsql.source-dir>
 	</properties>
 
 	<build>
@@ -22,6 +24,12 @@
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
 					<url>ttteeesssttt</url>
+					<!--
+					<sourceDir>${rsql.source-dir}</sourceDir>
+					<expectedDir>ex</expectedDir>
+					-->
+					<outputDir>output</outputDir>
+
 				</configuration>
 			</plugin>
 		</plugins>

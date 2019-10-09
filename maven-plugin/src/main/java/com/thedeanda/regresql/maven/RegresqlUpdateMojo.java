@@ -2,11 +2,9 @@ package com.thedeanda.regresql.maven;
 
 import com.thedeanda.regresql.RegresqlService;
 import com.thedeanda.regresql.datasource.DataSource;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -16,19 +14,14 @@ import java.util.Properties;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 
-// https://dzone.com/articles/a-simple-maven-3-plugin
-@Mojo(name = "test")
-public class RegresqlTestMojo extends AbstractMojo {
+@Mojo(name = "update")
+public class RegresqlUpdateMojo extends AbstractMojo {
 
     public static final String PROP_URL = "url";
     public static final String PROP_USERNAME = "username";
     public static final String PROP_PASSWORD = "password";
     public static final String PROP_SOURCE = "source-dir";
     public static final String PROP_EXPECTED = "expected-dir";
-    public static final String PROP_OUTPUT = "output-dir";
-    public static final String PROP_MAX_ERRORS = "max-errors";
-
-    public static final int DEFAULT_MAX_ERRORS = 10;
 
     @Parameter(property = "propertyFile")
     private String propertiesFile;
@@ -45,19 +38,14 @@ public class RegresqlTestMojo extends AbstractMojo {
     private String sourceDir = "./src/test/regresql/source";
     @Parameter(property = PROP_EXPECTED)
     private String expectedDir = "./src/test/regresql/expected";
-    @Parameter(property = PROP_OUTPUT)
-    private String outputDir = "./target/regresql";
-    @Parameter(property = PROP_MAX_ERRORS, defaultValue = "0")
-    private int maxErrors;
 
 
     File source;
     File expected;
-    File output;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        getLog().info("Running Regresql Test");
+        getLog().info("Updating Regresql Tests");
 
         checkParams();
 
@@ -66,13 +54,11 @@ public class RegresqlTestMojo extends AbstractMojo {
         DataSource dataSource = new DataSource(url, username, password);
         RegresqlService service = new RegresqlService(dataSource, source, expected);
         try {
-            if (!service.runAllTests(output, maxErrors)) {
-                throw new MojoFailureException("Some tests failed, see logs for more info");
-            }
+            service.updateAllTests();
         } catch (MojoFailureException e) {
             throw e;
         } catch (Exception e) {
-            throw new MojoFailureException("Test failed", e);
+            throw new MojoFailureException("Failed to update tests", e);
         }
     }
 
@@ -95,20 +81,15 @@ public class RegresqlTestMojo extends AbstractMojo {
             throw new MojoFailureException("Param 'source-dir' is required");
         if (isBlank(expectedDir))
             throw new MojoFailureException("Param 'expected-dir' is required");
-        if (isBlank(outputDir))
-            throw new MojoFailureException("Param 'output-dir' is required");
 
         source = new File(sourceDir);
         expected = new File(expectedDir);
-        output = new File(outputDir);
 
         if (!source.exists())
             throw new MojoFailureException("Source folder '" + sourceDir + "' does not exist");
         if (!expected.exists())
             throw new MojoFailureException("Expected folder '" + expectedDir + "' does not exist");
 
-        if (maxErrors <= 0)
-            maxErrors = DEFAULT_MAX_ERRORS;
     }
 
     private void loadPropertiesFile() throws MojoFailureException {
@@ -135,12 +116,6 @@ public class RegresqlTestMojo extends AbstractMojo {
             sourceDir = props.getProperty(PROP_SOURCE);
         if (isBlank(expectedDir) && props.containsKey(PROP_EXPECTED) || propertyFileWillOverride)
             expectedDir = props.getProperty(PROP_EXPECTED);
-        if (isBlank(outputDir) && props.containsKey(PROP_OUTPUT) || propertyFileWillOverride)
-            outputDir = props.getProperty(PROP_OUTPUT);
-        if (isBlank(outputDir) && props.containsKey(PROP_OUTPUT) || propertyFileWillOverride)
-            outputDir = props.getProperty(PROP_OUTPUT);
 
-        if (maxErrors == 0 && props.containsKey(PROP_OUTPUT) || propertyFileWillOverride)
-            maxErrors = Integer.parseInt(props.getProperty(PROP_MAX_ERRORS));
     }
 }
