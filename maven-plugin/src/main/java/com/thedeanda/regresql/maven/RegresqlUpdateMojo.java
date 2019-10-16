@@ -24,7 +24,7 @@ public class RegresqlUpdateMojo extends AbstractMojo {
     public static final String PROP_EXPECTED = "expected-dir";
 
     @Parameter(property = "propertyFile")
-    private String propertiesFile;
+    private String propertyFile;
     @Parameter(property = "propertyFileWillOverride")
     private boolean propertyFileWillOverride;
 
@@ -94,14 +94,14 @@ public class RegresqlUpdateMojo extends AbstractMojo {
 
     private void loadPropertiesFile() throws MojoFailureException {
         Properties props = new Properties();
-        if (isBlank(propertiesFile))
+        if (isBlank(propertyFile))
             return;
 
-        File f = new File(propertiesFile);
+        File f = new File(propertyFile);
         try (InputStream is = new FileInputStream(f)) {
             props.load(is);
         } catch (FileNotFoundException e) {
-            throw new MojoFailureException("Properties file '" + propertiesFile + "' not found");
+            throw new MojoFailureException("Properties file '" + propertyFile + "' not found");
         } catch (IOException e) {
             throw new MojoFailureException("Error loading properties: " + e.getMessage(), e);
         }
