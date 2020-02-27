@@ -16,6 +16,7 @@ public class TestSource implements Comparable<TestSource> {
     private File source;
     private File expected;
     private String relativePath;
+    private String contents;
 
     @Override
     public int compareTo(TestSource testSource) {

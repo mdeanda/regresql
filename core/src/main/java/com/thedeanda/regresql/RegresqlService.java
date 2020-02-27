@@ -73,6 +73,7 @@ public class RegresqlService {
         return !hasErrors;
     }
 
+    /** might only be used in tests now, consider removing */
     /** runs test and returns diffs */
     public List<RowDifference> runTest(TestSource test, int maxErrors) throws Exception {
         long start = System.currentTimeMillis();
@@ -94,7 +95,7 @@ public class RegresqlService {
         return diffs;
     }
 
-    public boolean runTest(TestSource test, File outputDir, int maxErrors) throws Exception {
+    private boolean runTest(TestSource test, File outputDir, int maxErrors) throws Exception {
         long start = System.currentTimeMillis();
         log.info("Running test: {}", test.getSource());
         File outputCsv = new File(outputDir, test.getBaseName() + TestLocator.CSV_EXT);

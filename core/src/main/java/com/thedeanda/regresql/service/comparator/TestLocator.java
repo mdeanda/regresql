@@ -2,12 +2,18 @@ package com.thedeanda.regresql.service.comparator;
 
 import com.thedeanda.regresql.model.TestSource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -43,11 +49,19 @@ public class TestLocator {
 
         Stream.of(files).filter(f -> !f.isDirectory()).forEach(f -> {
             String baseName = StringUtils.removeEnd(f.getName(), SOURCE_EXT);
+            String contents = null;
+            try {
+                contents = readFile(f);
+            } catch (IOException e) {
+                //TODO: this test should fail
+                log.warn(e.getMessage(), e);
+            }
             results.add(TestSource.builder()
                     .baseName(baseName)
                     .source(f)
                     .expected(findExpected(extraPath, baseName))
                     .relativePath(extraPath)
+                    .contents(contents)
                     .build());
         });
 
@@ -60,5 +74,14 @@ public class TestLocator {
         String fn = extraPath + File.separator + baseName + EXPECTED_EXT;
         File expectedFile = new File(expectedPath, fn);
         return expectedFile;
+    }
+
+    private String readFile(File file) throws IOException {
+        String output = null;
+        try (FileInputStream fis = new FileInputStream(file)) {
+            List<String> lines = IOUtils.readLines(fis, Charset.forName("UTF-8"));
+            output = lines.stream().collect(Collectors.joining("\n"));
+        }
+        return output;
     }
 }

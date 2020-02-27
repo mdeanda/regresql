@@ -20,20 +20,36 @@ public class TestLocatorTest {
         File s2 = new File(SOURCE, "/a/file2.sql");
         String e1 = "file1.csv";
         String e2 = "file2.csv";
+        String  e1Contents = "-- ignore-cols: foo, bar, monkey\n" +
+                "select *\n" +
+                "from test;";
 
         TestLocator locator = new TestLocator(SOURCE, EXPECTED);
         List<TestSource> tests = locator.locateTests();
 
         assertThat(tests).hasSize(2);
-        TestSource t = tests.get(0);
+        TestSource t = null;
+        t = find(tests, "file1.sql");
         assertThat(t.getSource().getCanonicalPath()).isEqualTo(s1.getCanonicalPath());
         assertThat(t.getExpected().getName()).isEqualTo(e1);
         assertThat(t.getRelativePath()).isEqualTo("./a");
+        assertThat(t.getContents()).isEqualTo(e1Contents);
 
 
-        t = tests.get(1);
+        t = find(tests, "file2.sql");
         assertThat(t.getSource().getCanonicalPath()).isEqualTo(s2.getCanonicalPath());
         assertThat(t.getExpected().getName()).isEqualTo(e2);
         assertThat(t.getRelativePath()).isEqualTo("./a");
+
     }
+
+    public TestSource find(List<TestSource> tests, String name) {
+        for (TestSource ts : tests) {
+            if (ts.getSource().getName().equals(name)) {
+                return ts;
+            }
+        }
+        return null;
+    }
+
 }
