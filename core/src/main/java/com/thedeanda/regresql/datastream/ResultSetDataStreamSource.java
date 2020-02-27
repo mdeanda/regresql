@@ -22,6 +22,7 @@ public class ResultSetDataStreamSource implements DataStreamSource {
     private final String sql;
     private List<String> columns;
 
+    Connection con;
     Statement statement;
     ResultSet resultSet;
 
@@ -43,7 +44,7 @@ public class ResultSetDataStreamSource implements DataStreamSource {
             throw new IllegalStateException("already initialized");
         }
 
-        Connection con = datasource.getConnection();
+        con = datasource.getConnection();
 
         try {
             statement = con.createStatement();
@@ -92,5 +93,7 @@ public class ResultSetDataStreamSource implements DataStreamSource {
     @Override
     public void close() throws Exception {
         if (statement != null) statement.close();
+        if (resultSet != null) resultSet.close();
+        if (con != null) con.close();
     }
 }
