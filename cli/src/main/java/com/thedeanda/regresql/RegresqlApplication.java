@@ -155,15 +155,15 @@ public class RegresqlApplication {
 			}
 		}
 
-		override(props, DataSource.PROP_DBURL);
-		override(props, DataSource.PROP_DBUSER);
-		override(props, DataSource.PROP_DBPASS);
+		override(props, DataSource.ENVPROP_DBURL, DataSource.PROP_DBURL);
+		override(props, DataSource.ENVPROP_DBUSER, DataSource.PROP_DBUSER);
+		override(props, DataSource.ENVPROP_DBPASS, DataSource.PROP_DBPASS);
 
 		return props;
 	}
 
-	private static void override(Properties props, String prop) {
-		String envPropName = toEnvProperty(prop);
+	private static void override(Properties props, String envProp, String prop) {
+		String envPropName = toEnvProperty(envProp);
 		String value = System.getenv(envPropName);
 		if (!StringUtils.isBlank(value)) {
 			props.setProperty(prop, value);

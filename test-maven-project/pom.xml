@@ -24,9 +24,7 @@
 				<artifactId>regresql-maven-plugin</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
-					<url>jdbc:hsqldb:file:${project.basedir}/tmp/testdb</url>
-					<username>SA</username>
-					<password></password>
+					<propertyFile>${project.basedir}/datasource.properties</propertyFile>
 					<sourceDir>${project.basedir}/src/test/resources/sql</sourceDir>
 					<expectedDir>${project.basedir}/src/test/resources/expected</expectedDir>
 					<outputDir>${project.basedir}/src/test/resources/output</outputDir>

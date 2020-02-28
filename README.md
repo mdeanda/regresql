@@ -17,9 +17,26 @@ mvn clean install
 
 The maven plugin will now be available to your current environment and the command line version will be available at `./cli/target/regresql-cli*.jar`
 
+## Run from Command Line
+
+RegreSQL can be run from command line and the test project included in the source can be used as a simple example:
+
+```bash
+cd test-maven-project
+java -jar ../cli/target/regresql-cli-*.jar \
+    -e ./src/test/resources/expected/ \
+    -o ./src/test/resources/output/ \
+    -s ./src/test/resources/sql/ \
+    -p ./datasource.properties \
+    --command test
+```
+
+If you run with the `-h` parameter you will get back a list of parameters you can pass in but they will pretty much match what is available for Maven.
+
+
 ## Maven RegreSQL Plugin
 
-Regresql can be used entirely from Maven.
+RegreSQL can be used entirely from Maven.
 
 ### Goals Available
 
