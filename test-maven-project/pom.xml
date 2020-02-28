@@ -6,6 +6,7 @@
 	<artifactId>test-maven-project</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>test-maven-project</name>
+	<packaging>jar</packaging>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -23,14 +24,21 @@
 				<artifactId>regresql-maven-plugin</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
-					<url>ttteeesssttt</url>
-					<!--
-					<sourceDir>${rsql.source-dir}</sourceDir>
-					<expectedDir>ex</expectedDir>
-					-->
-					<outputDir>output</outputDir>
-
+					<url>jdbc:hsqldb:file:./testdb</url>
+					<username>SA</username>
+					<password></password>
+					<sourceDir>src/test/resources/sql</sourceDir>
+					<expectedDir>src/test/resources/expected</expectedDir>
+					<outputDir>src/test/resources/output</outputDir>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
