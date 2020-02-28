@@ -1,5 +1,5 @@
 # RegreSQL
-![Java CI](https://github.com/mdeanda/regresql/workflows/Java%20CI/badge.svg?branch=develop)
+![Java CI](https://github.com/mdeanda/regresql/workflows/Java%20CI/badge.svg)
 
 ## Installation
 
