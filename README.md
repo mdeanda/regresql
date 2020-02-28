@@ -22,8 +22,8 @@ Regresql can be used entirely from Maven.
 
 ### Goals Available
 
-* regresql:update - Updates expected results.
-* regresql:test - Tests queries against expected results.
+* __regresql:update__ - Updates expected results.
+* __regresql:test__ - Tests queries against expected results.
 
 ### Configuration
 
@@ -49,11 +49,11 @@ Configuration of the maven plugin is done in the `<plugins>` section of the `pom
 
 #### Supported Configuration Properties
 
-* sourceDir - The source directory to find `.sql` files in.
-* expectedDir - The base directory to find corresponding expected results files.
-* outputDir - The working directory to write output files to for comparison and test results.
-* url - The JDBC url to use to connect to the database.
-* username - The username to use when connecting to the database.
-* password - The password to use when connecting to the database.
-* propertyFile - The property file to use to read configuration settings from.
-* propertyFileWillOverride - Allows the property file to overwrite values explicitely set in the `pom.xml` file.
+* __sourceDir__ - The source directory to find `.sql` files in.
+* __expectedDir__ - The base directory to find corresponding expected results files.
+* __outputDir__ - The working directory to write output files to for comparison and test results.
+* __url__ - The JDBC url to use to connect to the database.
+* __username__ - The username to use when connecting to the database.
+* __password__ - The password to use when connecting to the database.
+* __propertyFile__ - The property file to use to read configuration settings from.
+* __propertyFileWillOverride__ - Allows the property file to overwrite values explicitely set in the `pom.xml` file.
