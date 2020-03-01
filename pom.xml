@@ -20,7 +20,7 @@
 	<modules>
 		<module>core</module>
 		<module>cli</module>
-<!-- 		<module>gui</module> -->
+		<module>gui</module>
 		<module>maven-plugin</module>
 		<module>test-maven-project</module>
 	</modules>
