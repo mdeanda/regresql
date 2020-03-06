@@ -26,17 +26,9 @@ public class ResultSetDataStreamSource implements DataStreamSource {
     Statement statement;
     ResultSet resultSet;
 
-    public ResultSetDataStreamSource(DataSource ds, File file) throws Exception {
+    public ResultSetDataStreamSource(DataSource ds, String sql) throws Exception {
         this.datasource = ds;
-        try (FileInputStream fis = new FileInputStream(file)) {
-            List<String> lines = IOUtils.readLines(fis, Charset.forName("UTF-8"));
-            this.sql = lines.stream().collect(Collectors.joining("\n"));
-        }
-    }
-
-    public ResultSetDataStreamSource(DataSource ds, String sqlQuery) throws Exception {
-        this.datasource = ds;
-        this.sql = sqlQuery;
+        this.sql = sql;
     }
 
     public void init() throws Exception {

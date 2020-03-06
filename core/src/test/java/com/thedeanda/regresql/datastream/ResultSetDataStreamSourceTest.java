@@ -7,6 +7,7 @@ import com.thedeanda.regresql.model.HeaderModel;
 import com.thedeanda.regresql.model.RowDifference;
 import com.thedeanda.regresql.model.RowModel;
 import com.thedeanda.regresql.model.TestSource;
+import com.thedeanda.regresql.service.comparator.TestLocator;
 import org.junit.*;
 
 import java.io.File;
@@ -61,11 +62,8 @@ public class ResultSetDataStreamSourceTest {
         File expected = new File("./src/test/resources/testdata/expected/user.csv");
 
         RegresqlService service = new RegresqlService(ds, source, expected);
-        TestSource test = TestSource.builder()
-                .expected(expected)
-                .source(source)
-                .baseName("user")
-                .build();
+        TestLocator testLocator = new TestLocator(source.getParentFile(), expected.getParentFile());
+        TestSource test = testLocator.loadTestSource(source.getParentFile(), ".", source);
         List<RowDifference> results = service.runTest(test, 10);
 
         assertThat(results).isNotNull().isEmpty();
@@ -77,11 +75,8 @@ public class ResultSetDataStreamSourceTest {
         File expected = new File("./src/test/resources/testdata/expected/user.csv");
 
         RegresqlService service = new RegresqlService(ds, source, expected);
-        TestSource test = TestSource.builder()
-                .expected(expected)
-                .source(source)
-                .baseName("user")
-                .build();
+        TestLocator testLocator = new TestLocator(source.getParentFile(), expected.getParentFile());
+        TestSource test = testLocator.loadTestSource(source.getParentFile(), ".", source);
         List<RowDifference> results = service.runTest(test, 10);
 
         assertThat(results).isNotNull().isEmpty();

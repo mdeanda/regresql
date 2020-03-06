@@ -5,6 +5,7 @@ import com.thedeanda.regresql.model.HeaderModel;
 import com.thedeanda.regresql.model.RowDifference;
 import com.thedeanda.regresql.model.RowModel;
 import com.thedeanda.regresql.model.TestSource;
+import com.thedeanda.regresql.service.comparator.TestLocator;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
@@ -23,6 +24,12 @@ public class DiffWriter {
     private static final String ROW_HEADER = "Line";
     private static final String EXPECTED = "Expected";
     private static final String ACTUAL = "Actual";
+
+    public void cleanDiffs(File outputDir, TestSource test) {
+        new File(outputDir, test.getBaseName() + TestLocator.CSV_EXT).delete();
+        new File(outputDir, test.getBaseName() + DIFF_TYPE_1_SUFFIX).delete();
+        new File(outputDir, test.getBaseName() + DIFF_TYPE_SPARSE_SUFFIX).delete();
+    }
 
     public void outputDiffs(HeaderModel headerModel, List<RowDifference> diffs, File outputDir, TestSource test) throws IOException {
         outputDiffsAsCsv(headerModel, diffs, outputDir, test);

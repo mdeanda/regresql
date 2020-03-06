@@ -51,7 +51,7 @@ public class RegresqlService {
 
     public void updateTest(TestSource test) throws Exception {
         log.info("updating test data for {}", test.getSource());
-        try (ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getSource())) {
+        try (ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getContents())) {
             rsdss.init();
             StreamToCsvService streamToCsvService = new StreamToCsvService();
             streamToCsvService.convert(rsdss, test.getExpected());
@@ -80,7 +80,7 @@ public class RegresqlService {
         long start = System.currentTimeMillis();
         log.info("Running test: {}", test.getSource());
 
-        ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getSource());
+        ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getContents());
         rsdss.init();
 
         CsvDataStreamSource expectedData = new CsvDataStreamSource(test.getExpected());
@@ -99,9 +99,10 @@ public class RegresqlService {
     private boolean runTest(TestSource test, File outputDir, int maxErrors) throws Exception {
         long start = System.currentTimeMillis();
         log.info("Running test: {}", test.getSource());
+        diffWriter.cleanDiffs(outputDir, test);
         File outputCsv = new File(outputDir, test.getBaseName() + TestLocator.CSV_EXT);
 
-        try (ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getSource())) {
+        try (ResultSetDataStreamSource rsdss = new ResultSetDataStreamSource(dataSource, test.getContents())) {
             rsdss.init();
             StreamToCsvService streamToCsvService = new StreamToCsvService();
             streamToCsvService.convert(rsdss, outputCsv);

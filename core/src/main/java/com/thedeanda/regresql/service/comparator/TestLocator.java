@@ -48,26 +48,30 @@ public class TestLocator {
         );
 
         Stream.of(files).filter(f -> !f.isDirectory()).forEach(f -> {
-            String baseName = StringUtils.removeEnd(f.getName(), SOURCE_EXT);
-            String contents = null;
-            try {
-                contents = readFile(f);
-            } catch (IOException e) {
-                //TODO: this test should fail
-                log.warn(e.getMessage(), e);
-            }
-            results.add(TestSource.builder()
-                    .baseName(baseName)
-                    .source(f)
-                    .expected(findExpected(extraPath, baseName))
-                    .relativePath(extraPath)
-                    .contents(contents)
-                    .build());
+            results.add(loadTestSource(base, extraPath, f));
         });
 
         Stream.of(files).filter(File::isDirectory).forEach(f -> {
             findTests(base, extraPath + File.separator + f.getName(), results);
         });
+    }
+
+    public TestSource loadTestSource(File base, String extraPath, File f) {
+        String baseName = StringUtils.removeEnd(f.getName(), SOURCE_EXT);
+        String contents = null;
+        try {
+            contents = readFile(f);
+        } catch (IOException e) {
+            //TODO: this test should fail
+            log.warn(e.getMessage(), e);
+        }
+        return TestSource.builder()
+                .baseName(baseName)
+                .source(f)
+                .expected(findExpected(extraPath, baseName))
+                .relativePath(extraPath)
+                .contents(contents)
+                .build();
     }
 
     private File findExpected(String extraPath, String baseName) {
